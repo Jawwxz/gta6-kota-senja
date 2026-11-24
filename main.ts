@@ -26,11 +26,20 @@ const here = fileURLToPath(new URL('.', import.meta.url));
 const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
 // Fail fast with a clear message when a deliverable is missing, instead of
-// handing the scorer a half-empty /output.
+// handing the scorer a half-empty /output. Every game module is checked, not
+// just the entry point: a missing module would break the game at load time.
 const required = [
   'game/index.html',
   'game/vendor/three.module.min.js',
   'game/src/main.js',
+  'game/src/city.js',
+  'game/src/vehicles.js',
+  'game/src/actors.js',
+  'game/src/missions.js',
+  'game/src/audio.js',
+  'game/src/hud.js',
+  'game/src/shots.js',
+  'game/src/util.js',
   'LICENSE',
   '.makefun/owner.json',
 ];

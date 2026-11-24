@@ -31,3 +31,7 @@ node serve.ts
 ## Build
 
 `game/` is the whole game (three.js r160 vendored as `game/vendor/three.module.min.js`). `main.ts` copies `game/` and `screenshots/` to `/output` and writes the dossier the judge reads. Screenshots are real renders of the game in desktop Chrome, staged with `?shot=menu|drive|combat|chase`.
+
+## How the game was verified
+
+Before submission the build was played end to end in headless Chrome: menu → start → enter the own car (no wanted) → drive → mission 1 completed and paid → mission 2 thugs spawned → punch and shoot → pause and resume, with zero console errors. The four screenshots are real gameplay frames from the same staged driver.

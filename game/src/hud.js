@@ -57,7 +57,7 @@ export function createHud() {
     const px = (x) => C + x * k, pz = (z) => C + z * k;
     mm.clearRect(0, 0, S, S);
     mm.fillStyle = '#241a30'; mm.fillRect(0, 0, S, S);
-    // districts
+    // districts: warehouse north (amber), market south (pink)
     mm.fillStyle = 'rgba(180,120,60,0.18)'; mm.fillRect(0, 0, S, pz(-54));
     mm.fillStyle = 'rgba(255,46,136,0.14)'; mm.fillRect(0, pz(54), S, S - pz(54));
     // roads
@@ -68,7 +68,7 @@ export function createHud() {
     }
     // plaza
     mm.fillStyle = '#8a6ab0'; mm.fillRect(px(-13), pz(-13), 26 * k, 26 * k);
-    // mission marker
+    // mission marker (pulsing)
     if (marker) {
       const pulse = 4 + Math.sin(G.time * 5) * 1.6;
       mm.fillStyle = '#ffb36b';
@@ -87,7 +87,7 @@ export function createHud() {
     for (const e of G.actors.enemies) {
       if (!e.dead) { mm.beginPath(); mm.arc(px(e.pos.x), pz(e.pos.z), 3, 0, 7); mm.fill(); }
     }
-    // player arrow
+    // player arrow (points along heading)
     const p = G.actors.player.pos, h = G.actors.player.heading;
     mm.save();
     mm.translate(px(p.x), pz(p.z)); mm.rotate(Math.atan2(Math.sin(h), -Math.cos(h)) + Math.PI);

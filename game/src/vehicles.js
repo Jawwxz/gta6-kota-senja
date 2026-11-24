@@ -5,6 +5,7 @@ import { STREET_LINES } from './city.js';
 
 const CAR_COLORS = [0xc23b4e, 0x2e7f9e, 0xd8a13a, 0x5a6b8a, 0x7a4a9e, 0x3a7a4a, 0xd8d2c8, 0x30343c, 0x8a2f2f, 0x3f6fb5];
 
+// Box-built car: body, cabin, bumpers, lights, wheels, optional police bar.
 function makeCarMesh(color, opts = {}) {
   const g = new THREE.Group();
   const bodyMat = new THREE.MeshLambertMaterial({ color });
@@ -31,7 +32,7 @@ function makeCarMesh(color, opts = {}) {
     const tl = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.18, 0.34), tlMat);
     tl.position.set(-2.12, 0.68, z); g.add(tl);
   }
-  // wheels
+  // wheels (front pair steers)
   const wheelGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.32, 12);
   wheelGeo.rotateX(Math.PI / 2);
   const wheels = [], steerWheels = [];
@@ -144,7 +145,8 @@ export function createVehicles(G) {
     // the mission-4 target: gold sedan, east residential
     const target = newCar(0xd8a13a, 'parked', 126, -30, Math.PI / 2, { target: true });
     parked.push(target);
-    // Dimas' own beat-up sedan near home (no wanted for taking it)
+    // Dimas' own beat-up sedan near home (no wanted for taking it).
+    // Parked clear of the (36,126) stealable so the two never share a spot.
     const own = newCar(0x5a6b8a, 'parked', 24, 126, Math.PI, { own: true });
     parked.push(own);
   }
@@ -254,7 +256,7 @@ export function createVehicles(G) {
         c.route.push(pickNextNode(c));
         if (c.route.length > 3) c.route.shift();
       }
-      // anti-stuck: nudge if barely moved
+      // anti-stuck: reroute if barely moved while trying to drive
       if (dist2(c.pos.x, c.pos.z, c.lastPos.x, c.lastPos.z) < 0.05 && c.speed > 1) c.stuck += dt;
       else c.stuck = 0;
       c.lastPos = { x: c.pos.x, z: c.pos.z };
@@ -316,7 +318,7 @@ export function createVehicles(G) {
       c.pos.z += Math.cos(c.heading) * c.speed * dt;
       if (city.collideCircle(c.pos, 1.9)) c.speed *= 0.5;
       collideCars(c);
-      // ram the player car (push the car itself, not the detached pos copy)
+      // ram the player car: push the car itself, not the detached pos copy
       if (playerInCar && player.car && dPlayer < 4.2) {
         const dx = player.car.pos.x - c.pos.x, dz = player.car.pos.z - c.pos.z;
         const l = Math.hypot(dx, dz) || 1;

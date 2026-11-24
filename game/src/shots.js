@@ -3,6 +3,8 @@
 // short session really looks like. Same seed => same frame.
 export function stageShot(name, G) {
   const { actors, vehicles, missions } = G;
+  // Put a car under the player: pull it out of the parked/traffic pool,
+  // place it, and hand the headlight to it.
   const putInCar = (car, x, z, heading, speed) => {
     for (const arr of [vehicles.parked, vehicles.traffic]) {
       const i = arr.indexOf(car); if (i >= 0) arr.splice(i, 1);
@@ -34,8 +36,8 @@ export function stageShot(name, G) {
     G.startGame();
     missions.start(1); // Preman Pasar: 4 thugs at the market
     // Stage on the open market street facing east, so the thugs stand in the
-    // road in clear view (the old spot put a stall awning between camera and
-    // enemies). Player west, thugs ahead in the street.
+    // road in clear view (an earlier spot hid them behind a stall awning).
+    // Player west, thugs ahead in the street.
     actors.player.pos.set(-6, 0, 90);
     actors.player.heading = Math.PI / 2; // facing east, down the street
     actors.player.mesh.position.copy(actors.player.pos);

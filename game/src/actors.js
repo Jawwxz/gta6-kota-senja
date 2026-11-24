@@ -6,6 +6,7 @@ const SKINS = [0xc98d64, 0x8a5a3b, 0xe8b98a, 0x6b4423];
 const JACKETS = [0x7a4a9e, 0x2e6f8e, 0xc77b21, 0x4a7a3a, 0x8a2f2f, 0xd8d2c8];
 const PANTS = [0x2a2a3a, 0x3a2a1a, 0x1c2a3a, 0x4a4a4a];
 
+// Box-built person with swinging limbs and a blob shadow.
 function makePersonMesh({ jacket = 0x7a4a9e, pants = 0x2a2a3a, skin = 0xc98d64, hat = null, scale = 1 } = {}) {
   const g = new THREE.Group();
   const jMat = new THREE.MeshLambertMaterial({ color: jacket });
@@ -244,7 +245,7 @@ export function createActors(G) {
     player.mesh.position.copy(player.pos);
     player.mesh.rotation.y = player.heading;
     walkAnim(player.parts, player.walkPhase, clamp(player.speed / 5, 0, 1));
-    // punch arm
+    // punch arm swing
     if (player.punchT > 0) {
       player.punchT -= dt;
       player.parts.armR.rotation.x = -1.6 * Math.sin((0.25 - player.punchT) / 0.25 * Math.PI);
@@ -255,7 +256,7 @@ export function createActors(G) {
       player.reloading -= dt;
       if (player.reloading <= 0) { player.ammo = player.maxAmmo; }
     }
-    // regen
+    // slow health regen after 6s without damage
     if (G.time - player.lastDamage > 6 && player.hp > 0 && player.hp < player.maxHp) {
       player.hp = Math.min(player.maxHp, player.hp + 3 * dt);
     }

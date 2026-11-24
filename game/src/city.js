@@ -9,6 +9,7 @@ const BLOCK = 26;      // block size
 const STREET_W = 10;   // street width
 const CITY_R = 175;    // playable radius (soft bound)
 
+// Building facade: dark base with a grid of windows, some lit warm or cool.
 function facadeTexture(rng, base, litRatio) {
   return canvasTexture(128, 256, (g, w, h) => {
     g.fillStyle = base; g.fillRect(0, 0, w, h);
@@ -139,7 +140,7 @@ export function buildCity(scene, seed = 1) {
 
   const box = (w, h, d, mat) => new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
 
-  // ---- blocks ----
+  // ---- blocks: north = warehouses (Gudang), south = market (Pasar), middle = homes ----
   const districtOf = (bx, bz) => (bz <= -54 ? 'gudang' : bz >= 54 ? 'pasar' : 'campur');
   for (const bx of BLOCK_CENTERS) {
     for (const bz of BLOCK_CENTERS) {
@@ -258,7 +259,7 @@ export function buildCity(scene, seed = 1) {
     group.add(b);
   }
 
-  // ---- named spots ----
+  // ---- named spots (missions, respawns, saves) ----
   const spots = {
     market: { x: 0, z: 90 },
     warehouse: { x: 0, z: -108 },
@@ -299,9 +300,7 @@ export function buildCity(scene, seed = 1) {
     return { x: bx + r.range(-11, 11), z: bz + r.range(-11, 11) };
   };
 
-  let tAcc = 0;
   function update(dt, t) {
-    tAcc += dt;
     water.rotation.z += dt * 0.4;
     sunGlow.material.opacity = 0.24 + Math.sin(t * 0.4) * 0.06;
     for (const s of neonSigns) {

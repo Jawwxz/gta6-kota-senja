@@ -1,4 +1,4 @@
-// Kota Senja — small shared helpers: seeded RNG, math, canvas textures.
+// Kota Senja — shared helpers: seeded RNG, math, canvas textures.
 // No network, no dependencies beyond the vendored three.js.
 import * as THREE from '../vendor/three.module.min.js';
 
@@ -6,7 +6,7 @@ export const TAU = Math.PI * 2;
 
 export function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
 export function lerp(a, b, t) { return a + (b - a) * t; }
-/** Frame-rate independent damping factor. */
+/** Frame-rate independent damping factor (0..1 for rate*dt). */
 export function damp(rate, dt) { return 1 - Math.exp(-rate * dt); }
 /** Shortest signed angle difference, in [-PI, PI]. */
 export function angDiff(a, b) {
@@ -15,6 +15,7 @@ export function angDiff(a, b) {
   if (d < -Math.PI) d += TAU;
   return d;
 }
+/** Euclidean distance on the ground plane. */
 export function dist2(ax, az, bx, bz) { return Math.hypot(ax - bx, az - bz); }
 
 /** Deterministic RNG (mulberry32). Same seed => same city, same traffic. */
@@ -46,7 +47,7 @@ export function canvasTexture(w, h, draw) {
   return tex;
 }
 
-/** Bold sign texture with glowing text on a dark plate. */
+/** Bold sign texture: glowing text on a dark plate, sized to the text. */
 export function signTexture(text, { fg = '#ff2e88', bg = '#160a24', font = 64 } = {}) {
   const c = document.createElement('canvas');
   const ctx = c.getContext('2d');

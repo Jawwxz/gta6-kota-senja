@@ -281,7 +281,7 @@ function checkCarPedHits() {
   }
 }
 
-// ---------- busted check ----------
+// ---------- busted check: police close + slow = arrested ----------
 function checkBusted(dt) {
   const p = G.actors.player;
   if (G.state.wanted === 0 || G.state.mode !== 'playing') { bustT = 0; return; }
@@ -305,7 +305,6 @@ function checkBusted(dt) {
 
 // ---------- main loop ----------
 const clock = new THREE.Clock();
-let menuAmbientStarted = false;
 function loop() {
   requestAnimationFrame(loop);
   const dt = Math.min(clock.getDelta(), 0.05);
@@ -315,9 +314,8 @@ function loop() {
   if (mode === 'menu') {
     G.vehicles.updateTraffic(dt);
     G.actors.update(dt, input, G.camYaw);
-    if (!menuAmbientStarted) { menuAmbientStarted = true; }
   } else if (mode === 'playing') {
-    // wanted decay
+    // wanted decay (faster once the chase is escaped)
     if (G.state.wanted > 0) {
       decayT += dt;
       const interval = G.state.wantedDecayFast ? 4 : 16;

@@ -22,7 +22,7 @@ const MIME = {
   '.jpeg': 'image/jpeg',
 };
 
-createServer((req, res) => {
+const server = createServer((req, res) => {
   let pathname;
   try {
     pathname = decodeURIComponent(new URL(req.url ?? '/', 'http://localhost').pathname);
@@ -32,6 +32,7 @@ createServer((req, res) => {
   }
   if (pathname.endsWith('/')) pathname += 'index.html';
   const file = resolve(join(root, normalize(pathname)));
+  // Stay inside game/: no directory traversal out of the served root.
   if (file !== root && !file.startsWith(root + sep)) {
     res.writeHead(403).end('forbidden');
     return;
@@ -50,7 +51,11 @@ createServer((req, res) => {
     'content-length': size,
     'cache-control': 'no-store',
   });
-  createReadStream(file).pipe(res);
-}).listen(port, '127.0.0.1', () => {
-  console.log(`Kota Senja is on http://localhost:${port}`);
+  // HEAD gets headers only; GET streams the file.
+  if (req.method === 'HEAD') res.end();
+  else createReadStream(file).pipe(res);
+});
+
+server.listen(port, '127.0.0.1', () => {
+  console.log(`Kota Senja is on http://localhost:${port} (serving ${root})`);
 });

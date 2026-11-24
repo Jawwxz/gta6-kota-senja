@@ -2,6 +2,8 @@
 import * as THREE from '../vendor/three.module.min.js';
 import { dist2 } from './util.js';
 
+// All goto/deliver points sit on streets or open ground, never inside a
+// building footprint, so every step is reachable on foot or by car.
 const MISSIONS = [
   {
     id: 1, title: 'Paket Pertama',
@@ -62,7 +64,7 @@ const MISSIONS = [
 
 export function createMissions(G) {
   const { scene, hud, audio } = G;
-  // marker beacon
+  // marker beacon: light pillar + ground ring at the current objective
   const beaconMat = new THREE.MeshBasicMaterial({ color: 0xffb36b, transparent: true, opacity: 0.22, depthWrite: false, side: THREE.DoubleSide });
   const beacon = new THREE.Mesh(new THREE.CylinderGeometry(2.6, 2.6, 34, 16, 1, true), beaconMat);
   beacon.position.y = 17;
@@ -114,10 +116,12 @@ export function createMissions(G) {
     if (s.type === 'defeat' && spawnedForStep !== step) {
       spawnedForStep = step;
       if (s.missionId === 2) {
+        // four thugs around the market plaza, all on the street
         const spots = [[-8, 84], [8, 96], [-4, 100], [10, 82]];
         spots.forEach(([x, z]) => G.actors.spawnEnemy(x, z, 'thug', 2));
         moveMarker(0, 90);
       } else if (s.missionId === 5) {
+        // five warehouse guards: three thugs, two shooters
         const spots = [[-8, -124], [8, -128], [0, -120], [-12, -130], [12, -122]];
         spots.forEach(([x, z], k) => G.actors.spawnEnemy(x, z, k < 3 ? 'thug' : 'shooter', 5));
         moveMarker(0, -126);

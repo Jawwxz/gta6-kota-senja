@@ -12,7 +12,7 @@ export function createAudio() {
     try {
       ctx = new (window.AudioContext || window.webkitAudioContext)();
       master = ctx.createGain(); master.gain.value = 0.5; master.connect(ctx.destination);
-      // engine hum
+      // engine hum: saw + square through a lowpass
       engineOsc1 = ctx.createOscillator(); engineOsc1.type = 'sawtooth'; engineOsc1.frequency.value = 42;
       engineOsc2 = ctx.createOscillator(); engineOsc2.type = 'square'; engineOsc2.frequency.value = 84;
       engineFilter = ctx.createBiquadFilter(); engineFilter.type = 'lowpass'; engineFilter.frequency.value = 420;
@@ -20,16 +20,16 @@ export function createAudio() {
       engineOsc1.connect(engineFilter); engineOsc2.connect(engineFilter);
       engineFilter.connect(engineGain); engineGain.connect(master);
       engineOsc1.start(); engineOsc2.start();
-      // siren
+      // police siren: two-tone triangle
       sirenOsc = ctx.createOscillator(); sirenOsc.type = 'triangle'; sirenOsc.frequency.value = 750;
       sirenGain = ctx.createGain(); sirenGain.gain.value = 0;
       sirenOsc.connect(sirenGain); sirenGain.connect(master); sirenOsc.start();
-      // ambient pad
+      // ambient pad: slow chord cycle
       padOsc = [ctx.createOscillator(), ctx.createOscillator(), ctx.createOscillator()];
       padGain = ctx.createGain(); padGain.gain.value = 0.045;
       padOsc.forEach((o, i) => { o.type = 'triangle'; o.frequency.value = CHORDS[0][i] / 2; o.connect(padGain); o.start(); });
       padGain.connect(master);
-      // skid noise loop
+      // skid noise: looped white noise through a bandpass
       const len = ctx.sampleRate * 1;
       const buf = ctx.createBuffer(1, len, ctx.sampleRate);
       const data = buf.getChannelData(0);
